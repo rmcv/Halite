@@ -1,17 +1,9 @@
 (ns RandomBot
-  (:require [game]
-            [io])
-  (:gen-class))
+  (:gen-class)
+  (:require io
+            [Moves :as moves]))
 
 (def bot-name "RandomClojureBot")
-
-(defn random-moves
-  "Takes a 2D vector of sites and returns a list of [site, direction] pairs"
-  [my-id game-map]
-  (let [my-sites (->> game-map
-                      flatten
-                      (filter #(= (:owner %) my-id)))]
-    (map vector my-sites (repeatedly #(rand-nth game/directions)))))
 
 (defn -main []
   (let [{:keys [my-id productions width height game-map]} (io/get-init!)]
@@ -22,4 +14,4 @@
 
     (doseq [turn (range)]
       (let [game-map (io/create-game-map width height productions (io/read-ints!))]
-        (io/send-moves! (random-moves my-id game-map))))))
+        (io/send-moves! (moves/improve-moves-2 my-id game-map))))))
