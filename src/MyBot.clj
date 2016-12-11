@@ -52,6 +52,23 @@
   (or (zero? production)
       (> strength (* 5 production))))
 
+(defn find-mvs-dir [game-map site border?]
+  (let [get-dirs (fn [dir]
+                   (->> (iterate #(game/adjacent-site game-map % dir) site)
+                        (take (if border? 5 100))
+                        (take-while #(or border? (is-opponent? %) (is-neutral? %)))
+                        (map #(/ (:production %) (:strength %)))
+                        (reduce +)))]
+    (->> game/cardinal-directions
+         (map get-dirs)
+         (zipmap game/cardinal-directions)
+         (group-by val)
+         (sort-by (comp - first))
+         first
+         last
+         rand-nth
+         last)))
+
 (defn get-dir [game-map {:keys [opponents teams neutral]} site]
   (let [width         (count (first game-map))
         height        (count game-map)
@@ -87,9 +104,13 @@
                            last
                            rand-nth)]
         (get-direction width height site target)
-        :still)
+        (if-let [mvs (find-mvs-dir game-map site false)]
+          mvs
+          :still))
 
-      :else :still
+      :else (if-let [mvs (find-mvs-dir game-map site true)]
+              mvs
+              :still)
       )))
 
 (defn move
