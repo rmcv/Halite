@@ -1,7 +1,9 @@
 (ns MyBot
   (:gen-class)
-  (:require io
-            [Moves :as moves]))
+  (:require [taoensso.timbre :as timbre
+             :refer [log  trace  debug  info  warn  error  fatal  report
+                     logf tracef debugf infof warnf errorf fatalf reportf
+                     spy get-env]]))
 
 (def bot-name "CLJ_RMCV")
 
@@ -53,6 +55,9 @@
       (> strength (* 5 production))))
 
 (defn find-mvs-dir [game-map site border?]
+  {:post [(do
+            (info site border? %)
+            true)]}
   (let [get-dirs (fn [dir]
                    (->> (iterate #(game/adjacent-site game-map % dir) site)
                         (take (if border? 5 100))
