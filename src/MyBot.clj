@@ -1,9 +1,13 @@
 (ns MyBot
   (:gen-class)
-  (:require [taoensso.timbre :as timbre
+  (:require [taoensso.timbre.appenders.core :as appenders]
+            [taoensso.timbre :as timbre
              :refer [log  trace  debug  info  warn  error  fatal  report
                      logf tracef debugf infof warnf errorf fatalf reportf
                      spy get-env]]))
+
+(timbre/merge-config!
+ {:appenders {:spit (appenders/spit-appender {:fname "app.log"})}})
 
 (def bot-name "CLJ_RMCV")
 
@@ -19,15 +23,15 @@
        (not (is-neutral? target))))
 
 #_(defn distance [width height {x1 :x y1 :y} {x2 :x y2 :y}]
-  (let [dx (Math/abs (- x1 x2))
-        dy (Math/abs (- y1 y2))
-        dx (if (> dx (/ width 2))
-             (- width dx)
-             dx)
-        dy (if (> dy (/ height 2))
-             (- height dy)
-             dy)]
-    (+ dx dy)))
+    (let [dx (Math/abs (- x1 x2))
+          dy (Math/abs (- y1 y2))
+          dx (if (> dx (/ width 2))
+               (- width dx)
+               dx)
+          dy (if (> dy (/ height 2))
+               (- height dy)
+               dy)]
+      (+ dx dy)))
 
 (defn get-direction [width height {fromx :x fromy :y} {tox :x toy :y}]
   (let [h2 (/ height 2)
@@ -78,11 +82,11 @@
   (let [width         (count (first game-map))
         height        (count game-map)
         get-targets   (fn [dir] (->> (iterate #(game/adjacent-site game-map % dir) site)
-                                    (take 2)))
+                                     (take 2)))
         get-opponents (comp (fn [targets]
-                           (->> (filter (partial is-opponent? site) targets)
-                                (filter #(< (:strength %) (:strength site)))))
-                         get-targets)
+                              (->> (filter (partial is-opponent? site) targets)
+                                   (filter #(< (:strength %) (:strength site)))))
+                            get-targets)
         get-neighbour (comp first get-targets)
         opps          (zipmap game/cardinal-directions
                               (map (comp count get-opponents) game/cardinal-directions))]
@@ -115,8 +119,7 @@
 
       :else (if-let [mvs (find-mvs-dir game-map site true)]
               mvs
-              :still)
-      )))
+              :still))))
 
 (defn move
   [my-id game-map]
@@ -146,4 +149,4 @@
     (doseq [turn (range)]
       (let [game-map (io/create-game-map width height productions (io/read-ints!))]
         (io/send-moves! (move my-id game-map))))))
- 
+
