@@ -16,7 +16,7 @@
        (not (is-neutral? src))
        (not (is-neutral? target))))
 
-(defn distance [width height {x1 :x y1 :y} {x2 :x y2 :y}]
+#_(defn distance [width height {x1 :x y1 :y} {x2 :x y2 :y}]
   (let [dx (Math/abs (- x1 x2))
         dy (Math/abs (- y1 y2))
         dx (if (> dx (/ width 2))
@@ -62,8 +62,8 @@
                                 (filter #(< (:strength %) (:strength site)))))
                          get-targets)
         get-neighbour (comp first get-targets)
-        opps          (zipmap game/directions
-                              (map (comp count get-opponents) game/directions))]
+        opps          (zipmap game/cardinal-directions
+                              (map (comp count get-opponents) game/cardinal-directions))]
     (cond
 
       ;; some opponents we can defeat
@@ -77,12 +77,12 @@
            first)
 
       ;; surrounded by teammates and strong enough to move
-      (and (every? same-team? (map get-neighbour game/directions))
+      (and (every? same-team? (map get-neighbour game/cardinal-directions))
            (strong-enough? site))
       (if-let [target (->> opponents
                            (filter (comp (partial < 6) :strength))
-                           (filter #(< (distance width height site %) (/ width 4)))
-                           (group-by (comp - (partial distance width height site)))
+                           (filter #(< (game/distance game-map site %) (/ width 4)))
+                           (group-by (comp - (partial game/distance game-map site)))
                            first
                            last
                            rand-nth)]
