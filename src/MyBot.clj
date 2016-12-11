@@ -156,6 +156,6 @@
 
       (doseq [turn (range)]
         (let [game-map (io/create-game-map width height productions (io/read-ints!))]
-          (io/send-moves! (moves/improve-moves-2 my-id game-map)))))))
+          (io/send-moves! (move my-id game-map)))))))
 
 
