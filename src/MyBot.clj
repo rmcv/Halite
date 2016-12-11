@@ -78,6 +78,9 @@
          first)))
 
 (defn get-dir [game-map {:keys [opponents teams neutral]} site]
+  {:post [(do
+            (info % site)
+            true)]}
   (let [width         (count (first game-map))
         height        (count game-map)
         get-targets   (fn [dir] (->> (iterate #(game/adjacent-site game-map % dir) site)
