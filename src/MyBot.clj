@@ -137,10 +137,10 @@
 
 (defn -main []
   (do
-    (timbre/merge-config!
-     {:appenders {:spit (appenders/spit-appender {:fname "app.log"})}})
+    ;; (timbre/merge-config!
+    ;;  {:appenders {:spit (appenders/spit-appender {:fname "app.log"})}})
 
-    (info "Starting...")
+    ;; (info "Starting...")
 
     (let [{:keys [my-id productions width height game-map]} (io/get-init!)]
 
