@@ -95,11 +95,12 @@
 (defn move
   [my-id game-map]
   (let [sites (flatten game-map)
-        groups (reduce #(update (cond
+        groups (reduce #(update %1
+                                (cond
                                   (= my-id (:owner %)) :teammates
                                   (= 0 (:owner %)) :neutral
                                   :else :opponents)
-                                conj %)
+                                conj %2)
                        {:teams []
                         :opponents []
                         :neutral []}
