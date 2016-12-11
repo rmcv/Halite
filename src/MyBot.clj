@@ -86,6 +86,7 @@
         get-neighbour (comp first get-targets)
         opps          (zipmap game/cardinal-directions
                               (map (comp count get-opponents) game/cardinal-directions))]
+    (info "get-dir" site)
     (cond
 
       ;; some opponents we can defeat
@@ -119,6 +120,7 @@
 
 (defn move
   [my-id game-map]
+  (info "about to move...")
   (let [sites (flatten game-map)
         groups (reduce #(update %1
                                 (cond
@@ -130,6 +132,7 @@
                         :opponents []
                         :neutral []}
                        sites)
+        _ (info "found teams" (count (:teams groups)) "opponents" (count (:opponents groups)))
         teams (:teams groups)]
     (zipmap teams
             (map (partial get-dir game-map groups)
@@ -137,10 +140,10 @@
 
 (defn -main []
   (do
-    ;; (timbre/merge-config!
-    ;;  {:appenders {:spit (appenders/spit-appender {:fname "app.log"})}})
+    (timbre/merge-config!
+     {:appenders {:spit (appenders/spit-appender {:fname "app.log"})}})
 
-    ;; (info "Starting...")
+    (info "Starting...")
 
     (let [{:keys [my-id productions width height game-map]} (io/get-init!)]
 
