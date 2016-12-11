@@ -58,9 +58,6 @@
       (> strength (* 5 production))))
 
 (defn find-mvs-dir [game-map site border?]
-  {:post [(do
-            (info site border? %)
-            true)]}
   (let [get-dirs (fn [dir]
                    (->> (iterate #(game/adjacent-site game-map % dir) site)
                         (take (if border? 5 100))
@@ -78,9 +75,6 @@
          first)))
 
 (defn get-dir [game-map {:keys [opponents teams neutral]} site]
-  {:post [(do
-            (info % site)
-            true)]}
   (let [width         (count (first game-map))
         height        (count game-map)
         get-targets   (fn [dir] (->> (iterate #(game/adjacent-site game-map % dir) site)
