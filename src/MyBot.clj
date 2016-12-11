@@ -67,7 +67,7 @@
          first
          last
          rand-nth
-         last)))
+         first)))
 
 (defn get-dir [game-map {:keys [opponents teams neutral]} site]
   (let [width         (count (first game-map))
