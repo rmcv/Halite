@@ -6,8 +6,7 @@
                      logf tracef debugf infof warnf errorf fatalf reportf
                      spy get-env]]))
 
-(timbre/merge-config!
- {:appenders {:spit (appenders/spit-appender {:fname "app.log"})}})
+
 
 (def bot-name "CLJ_RMCV")
 
@@ -140,6 +139,11 @@
                  teams))))
 
 (defn -main []
+  (timbre/merge-config!
+   {:appenders {:spit (appenders/spit-appender {:fname "app.log"})}})
+
+  (info "Starting...")
+
   (let [{:keys [my-id productions width height game-map]} (io/get-init!)]
 
     ;; Do any initialization you want with the starting game-map before submitting the bot-name
